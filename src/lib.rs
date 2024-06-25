@@ -6,7 +6,7 @@ use std::{
     env,
     fs::{self, File, OpenOptions},
     io::{BufReader, BufWriter, Read, Write},
-    path::Path,
+    path::{self, Path},
 };
 
 use crate::prelude::{AppError, Result};
@@ -16,10 +16,8 @@ pub trait JsonConverter {
     fn from_json(json: String) -> Self;
 }
 
-pub fn save(data: impl JsonConverter, identifier: &str) -> Result<String> {
-    let data_string = data.to_json();
+fn get_dir(identifier: &str) -> String {
     let mut path: String = get_appdata();
-
     let program_name = env::current_exe()
         .ok()
         .and_then(|path| {
@@ -32,6 +30,12 @@ pub fn save(data: impl JsonConverter, identifier: &str) -> Result<String> {
     path.push_str(&program_name);
     path.push_str("/");
     path.push_str(identifier);
+    return path;
+}
+
+pub fn save(data: impl JsonConverter, identifier: &str) -> Result<String> {
+    let data_string = data.to_json();
+    let path = get_dir(identifier);
     write_file(data_string, String::from(path.clone()));
     Ok(path)
 }
@@ -67,8 +71,7 @@ fn write_file(data: String, file_name: String) -> Result<File> {
 }
 
 pub fn read(identifier: &str) -> Result<String> {
-    let mut file_name = get_appdata();
-    file_name.push_str(identifier);
+    let file_name = get_dir(identifier);
     let file = match File::open(&file_name) {
         Ok(file) => file,
         Err(e) => {
