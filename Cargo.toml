@@ -1,0 +1,9 @@
+[package]
+name = "json_struct_db"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dirs = "5.0.1"
+serde = "1.0.203"
+serde_json = "1.0.117"
