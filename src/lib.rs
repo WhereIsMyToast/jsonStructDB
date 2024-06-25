@@ -15,11 +15,12 @@ pub trait JsonConverter {
     fn from_json(json: String) -> Self;
 }
 
-pub fn save(data: impl JsonConverter, identifier: &str) -> Result<File> {
+pub fn save(data: impl JsonConverter, identifier: &str) -> Result<String> {
     let data_string = data.to_json();
     let mut path: String = get_appdata();
     path.push_str(identifier);
-    write_file(data_string, String::from(path))
+    write_file(data_string, String::from(path.clone()));
+    Ok(path)
 }
 
 fn write_file(data: String, file_name: String) -> Result<File> {
