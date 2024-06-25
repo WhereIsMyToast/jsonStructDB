@@ -3,7 +3,8 @@ mod error;
 mod prelude;
 
 use std::{
-    fs::{File, OpenOptions},
+    env,
+    fs::{self, File, OpenOptions},
     io::{BufReader, BufWriter, Read, Write},
     path::Path,
 };
@@ -18,12 +19,32 @@ pub trait JsonConverter {
 pub fn save(data: impl JsonConverter, identifier: &str) -> Result<String> {
     let data_string = data.to_json();
     let mut path: String = get_appdata();
+
+    let program_name = env::current_exe()
+        .ok()
+        .and_then(|path| {
+            path.file_stem()
+                .map(|os_str| os_str.to_string_lossy().into_owned())
+        })
+        .unwrap_or_else(|| "default_program".to_string());
+
+    path.push_str("/");
+    path.push_str(&program_name);
+    path.push_str("/");
     path.push_str(identifier);
     write_file(data_string, String::from(path.clone()));
     Ok(path)
 }
 
 fn write_file(data: String, file_name: String) -> Result<File> {
+    if let Some(dir) = Path::new(&file_name).parent() {
+        if !dir.exists() {
+            fs::create_dir_all(dir).map_err(|e| AppError {
+                code: 5,
+                message: format!("Failed to create directory: {}", e),
+            })?;
+        }
+    }
     let mut file = match OpenOptions::new()
         .write(true)
         .create(true)

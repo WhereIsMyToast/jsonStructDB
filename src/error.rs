@@ -8,6 +8,7 @@ pub struct AppError {
 impl fmt::Display for AppError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let err_message = match self.code {
+            5 => "Error creating the dir",
             4 => "Error reading from file",
             3 => "Error writing to file",
             2 => "Error opening file",
