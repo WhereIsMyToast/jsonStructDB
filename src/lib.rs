@@ -44,7 +44,7 @@ fn write_file(data: String, file_name: String) -> Result<()> {
     Ok(())
 }
 
-pub fn read<T: JsonConverter>(identifier: &str) -> Result<T> {
+pub fn read<T: JsonConverter>(identifier: &str) -> Result<String> {
     let mut file_name = get_appdata();
     file_name.push_str(identifier);
     let file = match File::open(&file_name) {
@@ -64,8 +64,7 @@ pub fn read<T: JsonConverter>(identifier: &str) -> Result<T> {
         message: format!("Failed to read from file: {}", e),
     })?;
 
-    let data = T::from_json(contents);
-    Ok(data)
+    Ok(contents)
 }
 
 fn get_appdata() -> String {
