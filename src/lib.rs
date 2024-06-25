@@ -19,7 +19,7 @@ pub fn save(data: impl JsonConverter, identifier: &str) -> Result<()> {
     let data_string = data.to_json();
     let mut path: String = get_appdata();
     path.push_str(identifier);
-    write_file(data_string, String::from(identifier))
+    write_file(data_string, String::from(path))
 }
 
 fn write_file(data: String, file_name: String) -> Result<()> {
