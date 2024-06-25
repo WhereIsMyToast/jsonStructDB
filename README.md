@@ -1,6 +1,6 @@
 # JsonStructDB
 
-    JsonStructDB is a lightweight library designed to simplify saving and retrieving data as JSON in files within the app data directory. This is especially useful for applications that require straightforward data persistence without the overhead of a full-fledged database.
+JsonStructDB is a lightweight library designed to simplify saving and retrieving data as JSON in files within the app data directory. This is especially useful for applications that require straightforward data persistence without the overhead of a full-fledged database.
 
 ## Features
 
@@ -73,10 +73,10 @@ Using the same as before, implement the `JsonConverter` trait to your data struc
 
 Now the JsonConverter also implements a `from_json` function, so you can use the contents and call the `from_json` function to complente your data
 
-### License
+## License
 
-This proyect is licensed under the MIT License. See the LICENSE file for details
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-### Contributing
+## Contributing
 
 We welcome contributions and ideas of how to upgrade the proyect!
