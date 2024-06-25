@@ -15,14 +15,14 @@ pub trait JsonConverter {
     fn from_json(json: String) -> Self;
 }
 
-pub fn save(data: impl JsonConverter, identifier: &str) -> Result<()> {
+pub fn save(data: impl JsonConverter, identifier: &str) -> Result<File> {
     let data_string = data.to_json();
     let mut path: String = get_appdata();
     path.push_str(identifier);
     write_file(data_string, String::from(path))
 }
 
-fn write_file(data: String, file_name: String) -> Result<()> {
+fn write_file(data: String, file_name: String) -> Result<File> {
     let mut file = match OpenOptions::new()
         .write(true)
         .create(true)
@@ -41,7 +41,7 @@ fn write_file(data: String, file_name: String) -> Result<()> {
         code: 3,
         message: format!("Failed to write to file: {}", e),
     })?;
-    Ok(())
+    Ok(file)
 }
 
 pub fn read(identifier: &str) -> Result<String> {
