@@ -27,6 +27,7 @@ To save data, implement the `JsonConverter` trait for your data structure and ca
 ```
     use json_struct_db::{save, JsonConverter, Result};
 
+    #[derive(Serialize, Deserialize)]
     struct MyData {
         content: String,
     }
