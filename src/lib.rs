@@ -44,7 +44,7 @@ fn write_file(data: String, file_name: String) -> Result<()> {
     Ok(())
 }
 
-pub fn read<T: JsonConverter>(identifier: &str) -> Result<String> {
+pub fn read(identifier: &str) -> Result<String> {
     let mut file_name = get_appdata();
     file_name.push_str(identifier);
     let file = match File::open(&file_name) {
