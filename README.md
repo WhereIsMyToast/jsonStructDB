@@ -25,50 +25,95 @@ json_struct_db = { git = "https://github.com/WhereIsMyToast/jsonStructDB.git"}
 To save data, implement the `JsonConverter` trait for your data structure and call the save function.
 
 ```
-    use json_struct_db::{save, JsonConverter, Result};
+use serde::{Deserialize, Serialize};
 
-    #[derive(Serialize, Deserialize)]
-    struct MyData {
-        content: String,
+#[derive(Serialize, Deserialize)]
+struct MyData {
+    content1: String,
+    content2: i16,
+}
+
+//Make this the way you want
+//I use serde in this example beacuse is the easyest.
+impl json_struct_db::JsonConverter for MyData {
+    fn to_json(&self) -> String {
+        serde_json::to_string(&self).expect("Error converting to json")
     }
-
-    impl JsonConverter for MyData {
-        fn to_json(&self) -> String {
-            serde_json::to_string(self).expect("Failed to serialize MyData")
-        }
-
-        fn from_json(json: String) -> Self {
-            serde_json::from_str(&json).expect("Failed to deserialize MyData")
-        }
+    fn from_json(json: String) -> Self {
+        serde_json::from_str(&json).expect("Error converting to MyData")
     }
+}
 
-    fn main() {
-        let data = MyData { content: String::from("Hello, world!") };
-        let identifier = "output";
+fn main() {
+    let data = MyData {
+        content1: String::from("First content to save"),
+        content2: 1,
+    };
+    //This is the name of the file to save or read, you will have to use this identifier to get the
+    //data back
+    let identifier = "MyData";
 
-        match save(data, identifier) {
-            Ok(path) => println!("Data saved successfully at {}", path),
-            Err(e) => eprintln!("Error: {}", e.message),
-        }
+    match json_struct_db::save(data, identifier) {
+        Ok(path) => println!("The file was saved it the path: {}", path),
+        Err(e) => eprintln!("Error: {}", e),
     }
+}
+
 
 ```
+
+This code exaple makes and output in a file with the name of the identifier, inside a directory with the name of the program.
+{"content1":"First content to save","content2":1}
 
 ### Reading data
 
 Using the same as before, implement the `JsonConverter` trait to your data structure and call the read method
 
 ```
-    use json_struct_db::{read, Result};
+use json_struct_db::JsonConverter;
+use serde::{Deserialize, Serialize};
 
-    fn main() {
-        let identifier = "output";
+#[derive(Serialize, Deserialize)]
+struct MyData {
+    content1: String,
+    content2: i16,
+}
 
-        match read(identifier) {
-            Ok(contents) => println!("Read data: {}", contents),
-            Err(e) => eprintln!("Error: {}", e.message),
+impl MyData {
+    //Default data to inicialize the struct
+    fn new() -> Self {
+        MyData {
+            content1: String::new(),
+            content2: 0,
         }
     }
+}
+
+//Make this the way you want
+//I use serde in this example beacuse is the easyest.
+impl json_struct_db::JsonConverter for MyData {
+    fn to_json(&self) -> String {
+        serde_json::to_string(&self).expect("Error converting to json")
+    }
+    fn from_json(json: String) -> Self {
+        serde_json::from_str(&json).expect("Error converting to MyData")
+    }
+}
+
+fn main() {
+    let identifier = "MyData";
+    let mut my_data: MyData = MyData::new();
+
+    match json_struct_db::read(identifier) {
+        Ok(contents) => my_data = MyData::from_json(contents),
+        Err(e) => eprintln!("Error: {}", e),
+    }
+
+    println!(
+        "Content1: {}, Content2: {}",
+        my_data.content1, my_data.content2
+    );
+}
 
 ```
 
